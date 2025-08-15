@@ -109,7 +109,7 @@ function tickForClaim(uint256 tokensClaimed) public pure returns (int256 Tick) {
 
 ```solidity
 // 1. Calculate claim percentage
-p = (tokensClaimed * 100) / 100_000_000_000
+p = (tokensClaimed * 100) / 17_745_440_000
 
 // 2. Get tick from bonding curve
 tick = tickForClaim(tokensClaimed)
