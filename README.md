@@ -110,7 +110,7 @@ TICK_SPACING = 200;        // Uniswap V4 requirement
 TICK_SPREAD = 25_000;      // Liquidity spread range
 ```
 
-## Architecture
+## 🏛️ Architecture
 
 <img src="images/LGE-architecture.jpg" alt="LGE Architecture" width="800">
 
