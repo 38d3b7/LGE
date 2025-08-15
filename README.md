@@ -1,14 +1,13 @@
-# Liquidity Generation Event (LGE) Hook
+# Liquidity Generation Event (LGE) Uniswap 🦄 v4 Hook
 
-A novel token launchpad mechanism built on Uniswap v4 using hooks for fair token distribution and automatic liquidity creation.
+A novel token launchpad mechanism built on Uniswap v4 using hooks for liquidity-first token creation.
 
 ## 🚀 Overview
 
-The LGE Hook is a specialized Uniswap v4 hook that enables:
-- Fair token launches with linear distribution
-- Automatic liquidity pool creation
-- On-chain price discovery through dynamic tick placement
-- Protection against failed launches with full refund mechanism
+The LGE Hook enables:
+1. A novel token launches mechanism focused on liquidity
+2. Price discovery through dynamic tick placement
+3. Unsuccessful launches offer a full refund
 
 ## 📊 Core Mechanics
 
@@ -17,7 +16,7 @@ The LGE Hook is a specialized Uniswap v4 hook that enables:
 | Parameter | Value |
 |-----------|-------|
 | **Total Supply** | 17,745,440,000 tokens |
-| **Release Period** | 5,000 blocks (~1 hour on Ethereum) |
+| **Release Period** | 5,000 blocks |
 | **Release Rate** | 3,549,088 tokens/block |
 | **Trading Lock** | 6,000 blocks |
 
@@ -37,20 +36,20 @@ graph LR
    - 50% ETH → Pairs with tokens for LP
    - 50% ETH → Commitment fee (retained on success)
 3. **Settlement**
-   - ✅ Success: Users receive LP tokens
+   - ✅ Success: Users receive LP tokens. ETH "commitment" used for rewards, creators and LGE fees.
    - ❌ Failure: Full ETH refund
 
 ## 💡 Dynamic Pricing Model
 
-The system uses a bonding curve to map claim size to Uniswap tick placement:
+The system uses an algorith to map claim size to Uniswap tick placement:
 
 ![LGE Bonding Curve](LGE-curve-image.jpg)
 
 | Claim Size | Tick Range | ETH Cost |
 |------------|------------|----------|
-| Small (0-4.4%) | Very negative | High (expensive) |
-| Medium (4.4-15.6%) | Near zero | Balanced |
-| Large (15.6-100%) | Positive | Lower (cheaper) |
+| Small (0-4.4%) | Steep rise from -887,272 to 212,985 | High (expensive) |
+| Medium (4.4-15.6%) | Plateau | Balanced |
+| Large (15.6-100%) | Gradual rise to 887,272 | Lower (cheaper) |
 
 ## 🔧 Implementation
 
@@ -110,39 +109,19 @@ ethRequired = tokensClaimed / price
 userMustSend = ethRequired * 2
 ```
 
-## 📈 Bonding Curve Properties
-
-```
-Tick
-  ^
-  |     _______________/
-  |    /
-  |   /
-  |  /
-  | /
-  |/_________________
-  +-------------------> % Claimed
-  0%   4.4%  15.6%  100%
-```
-
-- **Phase 1 (0-4.4%)**: Steep rise from -887,272 to 212,985
-- **Phase 2 (4.4-15.6%)**: Plateau around 212,985
-- **Phase 3 (15.6-100%)**: Gradual rise to 887,272
-
 ## ⚙️ Technical Details
 
 ### Uniswap Integration
 - Uses `IPoolManager.mint()` for liquidity creation
-- Implements `ModifyLiquidityParams` with ±25,000 tick range
+- Implements `ModifyLiquidityParams` with ±25,000 tick range (Upper tick - Lower tick) so that liquidity is distributed.
 - Tick spacing: 200 (Uniswap v4 compatible)
 
 ### Key Features
 - ✅ Linear token release over blocks
-- ✅ Automatic LP creation
-- ✅ On-chain price discovery
+- ✅ Gamefied LP creation with price discovery
 - ✅ Refund mechanism for failed launches
-- ✅ No front-running (fixed release schedule)
-- ✅ Fair distribution (bonding curve incentives)
+- ✅ No front-running (fixed release schedule) and prohibitively expensive to buy small batches
+- ✅ Fair launch
 
 ## 🛠️ Configuration
 
@@ -150,7 +129,7 @@ Tick
 // Parameterizable values
 BASE_TICK = 212_985;  // Can be derived from target market cap
 TICK_SPACING = 200;   // Uniswap v4 requirement
-LIQUIDITY_RANGE = 25_000;  // ± from median tick
+LIQUIDITY_RANGE = 25_000;  // ± from median tick derived via Tick Calculation
 ```
 
 ## 📚 Resources
@@ -165,7 +144,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📄 License
 
-[Insert License Here]
+MIT
 
 ---
 
