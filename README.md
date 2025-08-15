@@ -108,17 +108,14 @@ function tickForClaim(uint256 tokensClaimed) public pure returns (int256 Tick) {
 ### ETH Requirement Calculation
 
 ```solidity
-// 1. Calculate claim percentage
-p = (tokensClaimed * 100) / 17_745_440_000
-
-// 2. Get tick from bonding curve
+// 1. Get tick from bonding curve based on tokens claimed
 tick = tickForClaim(tokensClaimed)
 
-// 3. Calculate base ETH requirement
+// 2. Calculate base ETH requirement
 price = 1.0001^tick
 ethRequired = tokensClaimed / price
 
-// 4. Apply 2x multiplier (prevents LP discount)
+// 3. Apply 2x multiplier (prevents LP discount)
 userMustSend = ethRequired * 2
 ```
 
