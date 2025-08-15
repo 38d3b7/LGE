@@ -9,6 +9,21 @@ The LGE Hook enables:
 2. Price discovery through dynamic tick placement
 3. Unsuccessful launches offer a full refund
 
+## 🏗️ Architecture
+
+![LGE Architecture](images/LGE-architecture.jpg)
+
+The LGE Hook architecture:
+
+- **LGE Hook Contract**: Manages token distribution and liquidity generation
+- **Token Streaming**: Linear release mechanism that distributes tokens over 5,000 blocks
+- **Price Discovery**: Dynamic tick calculation mapping claim sizes to optimal price points (upper and lower tick are then used to distribute liquidity)
+- **Liquidity Manager**: Handles the creation and distribution of LP positions through `IPoolManager`
+- **Settlement Module**: Manages success/failure conditions and processes refunds or LP token and rewards distribution
+- **User Interface**: Tracks real-time token availability and calculates required ETH contributions
+
+The system aims to leverage a v4 hook to inject custom logic at key points in the liquidity lifecycle, enabling a novel and experimental token launch.
+
 ## 📊 Core Mechanics
 
 ### Token Release Schedule
@@ -41,9 +56,9 @@ graph LR
 
 ## 💡 Dynamic Pricing Model
 
-The system uses an algorith to map claim size to Uniswap tick placement:
+The system uses an algorithm to map claim size to Uniswap tick placement:
 
-![LGE Bonding Curve](LGE-curve-image.jpg)
+![LGE Bonding Curve](images/LGE-curve-image.jpg)
 
 | Claim Size | Tick Range | ETH Cost |
 |------------|------------|----------|
@@ -113,12 +128,12 @@ userMustSend = ethRequired * 2
 
 ### Uniswap Integration
 - Uses `IPoolManager.mint()` for liquidity creation
-- Implements `ModifyLiquidityParams` with ±25,000 tick range (Upper tick - Lower tick) so that liquidity is distributed.
+- Implements `ModifyLiquidityParams` with ±25,000 tick range (Upper tick - Lower tick) so that liquidity is distributed
 - Tick spacing: 200 (Uniswap v4 compatible)
 
 ### Key Features
 - ✅ Linear token release over blocks
-- ✅ Gamefied LP creation with price discovery
+- ✅ Gamified LP creation with price discovery
 - ✅ Refund mechanism for failed launches
 - ✅ No front-running (fixed release schedule) and prohibitively expensive to buy small batches
 - ✅ Fair launch
