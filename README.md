@@ -104,6 +104,13 @@ function tickForClaim(uint256 tokensClaimed) public pure returns (int256 Tick) {
     Tick = (Tick / 200) * 200;
 }
 ```
+## Summary of the Tick Calculation
+
+1. Dynamic Base Tick: Instead of a static price, the system uses a formula (tickForClaim) to calculate a central tick. The calculation's result depends on the current total of tokensClaimed and follows a tiered structure (low, medium, and high demand) to influence the token's price trajectory.
+
+2. Liquidity Spreading: After the central tick is determined, a buffer is applied. This creates a price range by setting a tickLower and tickUpper around the calculated central tick.
+
+3. Position Creation: Liquidity is then provided to this specific range, spreading it across multiple ticks instead of concentrating it all at a single price point. This approach is designed to foster a more resilient market and a more robust price discovery process as liquidity is not immediately exhausted at a single price.
 
 ### ETH Requirement Calculation
 
