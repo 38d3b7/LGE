@@ -11,7 +11,7 @@ The LGE Hook enables:
 
 ## 🏗️ Architecture
 
-<img src="images/LGE-architecture.jpg" alt="LGE Architecture" width="600">
+<img src="images/LGE-architecture.jpg" alt="LGE Architecture" width="800">
 
 The LGE Hook architecture:
 
