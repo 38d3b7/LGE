@@ -1,6 +1,6 @@
 # Liquidity Generation Event (LGE) Uniswap 🦄 v4 Hook
 
-A novel token launchpad mechanism built on Uniswap v4 using hooks for liquidity-first token creation.
+A novel token launchpad mechanism built on Uniswap v4 using hooks for liquidity-first token creation. The system aims to leverage a v4 hook to inject custom logic at key points in the liquidity lifecycle, enabling a novel and experimental token launch.
 
 ## 🚀 Overview
 
@@ -11,7 +11,7 @@ The LGE Hook enables:
 
 ## 🏗️ Architecture
 
-![LGE Architecture](images/LGE-architecture.jpg)
+<img src="images/LGE-architecture.jpg" alt="LGE Architecture" width="600">
 
 The LGE Hook architecture:
 
@@ -21,8 +21,6 @@ The LGE Hook architecture:
 - **Liquidity Manager**: Handles the creation and distribution of LP positions through `IPoolManager`
 - **Settlement Module**: Manages success/failure conditions and processes refunds or LP token and rewards distribution
 - **User Interface**: Tracks real-time token availability and calculates required ETH contributions
-
-The system aims to leverage a v4 hook to inject custom logic at key points in the liquidity lifecycle, enabling a novel and experimental token launch.
 
 ## 📊 Core Mechanics
 
@@ -58,7 +56,7 @@ graph LR
 
 The system uses an algorithm to map claim size to Uniswap tick placement:
 
-![LGE Bonding Curve](images/LGE-curve-image.jpg)
+<img src="images/LGE-curve-image.jpg" alt="LGE Bonding Curve" width="600">
 
 | Claim Size | Tick Range | ETH Cost |
 |------------|------------|----------|
