@@ -38,19 +38,6 @@ graph LR
 
 <img src="images/LGE-curve-image.jpg" alt="LGE Bonding Curve" width="600">
 
-Three-phase bonding curve adjusts price based on claim size:
-
-- **Early (0-4.4%)**: Steep curve discourages small batches  
-  Formula: `tick = -TMAX × (1-x)² + startingTick × x²`
-  
-- **Plateau (4.4-15.6%)**: Stable pricing zone  
-  Formula: `tick = startingTick × (0.9 + 0.1 × progress)`
-  
-- **Late (15.6-100%)**: Gradual rise rewards larger commits  
-  Formula: `tick = startingTick + (TMAX - startingTick) × z²`
-
-Returns `tickLower` and `tickUpper` ready for direct `modifyLiquidity()` calls.
-
 ### Implementation
 
 ```function ticksForClaim(
