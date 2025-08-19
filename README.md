@@ -53,8 +53,7 @@ Returns `tickLower` and `tickUpper` ready for direct `modifyLiquidity()` calls.
 
 ### Implementation
 
-```solidity
-// SPDX-License-Identifier:
+```// SPDX-License-Identifier:
 pragma solidity ^0.8.26;
 
 library LGECalculationsLibrary {
@@ -62,25 +61,25 @@ library LGECalculationsLibrary {
     uint256 constant LOW_THRESHOLD = 774_544_000e18;     // ~4.4% of supply
     uint256 constant HIGH_THRESHOLD = 2_774_544_000e18;  // ~15.6% of supply
     int256 constant TMAX = 887_272;                      // Maximum tick
-    int256 constant TICK_SPREAD = 25_000;                // ± range for liquidity
+    int256 constant TICK_SPREAD = 250_000;                // ± range for liquidity
     
     function ticksForClaim(
-        uint256 tokensClaimed,
+        uint256 batchsize,
         int256 startingTick
     ) public pure returns (int24 tickLower, int24 tickUpper) {
         int256 tick;
         
-        if (tokensClaimed < LOW_THRESHOLD) {
+        if (batchsize < LOW_THRESHOLD) {
             // Smooth curve: -TMAX to startingTick
-            int256 x = int256((tokensClaimed * 1e6) / LOW_THRESHOLD);
+            int256 x = int256((batchsize * 1e6) / LOW_THRESHOLD);
             int256 oneMinusX = int256(1e6) - x;
             tick = ((-TMAX * oneMinusX * oneMinusX) / 1e12) +
                    ((startingTick * x * x) / 1e12);
         } 
-        else if (tokensClaimed <= HIGH_THRESHOLD) {
+        else if (batchsize <= HIGH_THRESHOLD) {
             // Plateau around startingTick
             int256 y = int256(
-                ((tokensClaimed - LOW_THRESHOLD) * 1e6) /
+                ((batchsize - LOW_THRESHOLD) * 1e6) /
                 (HIGH_THRESHOLD - LOW_THRESHOLD)
             );
             tick = (startingTick * (900_000 + (y / 10))) / 1_000_000;
@@ -88,7 +87,7 @@ library LGECalculationsLibrary {
         else {
             // Rising curve: startingTick to TMAX
             int256 z = int256(
-                ((tokensClaimed - HIGH_THRESHOLD) * 1e6) /
+                ((batchsize - HIGH_THRESHOLD) * 1e6) /
                 (TOTAL_SUPPLY - HIGH_THRESHOLD)
             );
             tick = startingTick + ((TMAX - startingTick) * z * z) / 1e12;
