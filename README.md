@@ -53,53 +53,46 @@ Returns `tickLower` and `tickUpper` ready for direct `modifyLiquidity()` calls.
 
 ### Implementation
 
-```// SPDX-License-Identifier:
-pragma solidity ^0.8.26;
+```function ticksForClaim(
+        uint256 batchSize,
+        int24 baseTick
+    ) public pure returns (int24 tickLower, int24 tickUpper, int256 tick) {
+        if (batchSize < LOW_THRESHOLD) {
+            // Smooth curve: -TMAX to BASE_TICK
+            int256 x = int256((batchSize * 1e18) / LOW_THRESHOLD);
+            int256 oneMinusX = int256(1e18) - x;
 
-library LGECalculationsLibrary {
-    uint256 constant TOTAL_SUPPLY = 17_745_440_000e18;
-    uint256 constant LOW_THRESHOLD = 774_544_000e18;     // ~4.4% of supply
-    uint256 constant HIGH_THRESHOLD = 2_774_544_000e18;  // ~15.6% of supply
-    int256 constant TMAX = 887_272;                      // Maximum tick
-    int256 constant TICK_SPREAD = 250_000;                // ± range for liquidity
-    
-    function ticksForClaim(
-        uint256 batchsize,
-        int256 startingTick
-    ) public pure returns (int24 tickLower, int24 tickUpper) {
-        int256 tick;
-        
-        if (batchsize < LOW_THRESHOLD) {
-            // Smooth curve: -TMAX to startingTick
-            int256 x = int256((batchsize * 1e6) / LOW_THRESHOLD);
-            int256 oneMinusX = int256(1e6) - x;
-            tick = ((-TMAX * oneMinusX * oneMinusX) / 1e12) +
-                   ((startingTick * x * x) / 1e12);
-        } 
-        else if (batchsize <= HIGH_THRESHOLD) {
-            // Plateau around startingTick
+            tick =
+                ((-TMAX * oneMinusX * oneMinusX) / 1e36) +
+                ((baseTick * x * x) / 1e36);
+        } else if (batchSize <= HIGH_THRESHOLD) {
+            // Plateau around BASE_TICK
             int256 y = int256(
-                ((batchsize - LOW_THRESHOLD) * 1e6) /
-                (HIGH_THRESHOLD - LOW_THRESHOLD)
+                ((batchSize - LOW_THRESHOLD) * 1e18) /
+                    (HIGH_THRESHOLD - LOW_THRESHOLD)
             );
-            tick = (startingTick * (900_000 + (y / 10))) / 1_000_000;
-        } 
-        else {
-            // Rising curve: startingTick to TMAX
+
+            tick = (baseTick * (9e17 + (y / 10))) / 1e18;
+        } else {
+            // Rising curve: BASE_TICK to TMAX
             int256 z = int256(
-                ((batchsize - HIGH_THRESHOLD) * 1e6) /
-                (TOTAL_SUPPLY - HIGH_THRESHOLD)
+                ((batchSize - HIGH_THRESHOLD) * 1e18) /
+                    (TOTAL_SUPPLY - HIGH_THRESHOLD)
             );
-            tick = startingTick + ((TMAX - startingTick) * z * z) / 1e12;
+
+            tick = baseTick + ((TMAX - baseTick) * z * z) / 1e36;
         }
-        
+
         // Snap to tick spacing and calculate bounds
         tick = (tick / 200) * 200;
         tickLower = int24(tick - TICK_SPREAD);
         tickUpper = int24(tick + TICK_SPREAD);
-    }
-}
-```
+
+        require(
+            tickLower >= -887272 && tickUpper <= 887272,
+            "Ticks out of bounds"
+        );
+    } ```
 
 ### Configuration
 
