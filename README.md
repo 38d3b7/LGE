@@ -40,7 +40,21 @@ graph LR
 
 ### Implementation
 
-```function ticksForClaim(
+```solidity
+pragma solidity ^0.8.26;
+
+import {TickMath} from "v4-core/libraries/TickMath.sol";
+import {FullMath} from "v4-core/libraries/FullMath.sol";
+import {FixedPoint96} from "v4-core/libraries/FixedPoint96.sol";
+
+library LGECalculationsLibrary {
+    uint256 constant TOTAL_SUPPLY = 17_745_440_000e18;
+    uint256 constant LOW_THRESHOLD = 774_544_000e18; // ~4.4% of supply
+    uint256 constant HIGH_THRESHOLD = 2_774_544_000e18; // ~15.6% of supply
+    int256 constant TMAX = 887_272; // Maximum tick
+    int256 constant TICK_SPREAD = 25_000; // +- range for liquidity
+
+    function ticksForClaim(
         uint256 batchSize,
         int24 baseTick
     ) public pure returns (int24 tickLower, int24 tickUpper, int256 tick) {
@@ -52,7 +66,9 @@ graph LR
             tick =
                 ((-TMAX * oneMinusX * oneMinusX) / 1e36) +
                 ((baseTick * x * x) / 1e36);
-        } else if (batchSize <= HIGH_THRESHOLD) {
+        } else if (
+            (batchSize >= LOW_THRESHOLD) && (batchSize <= HIGH_THRESHOLD)
+        ) {
             // Plateau around BASE_TICK
             int256 y = int256(
                 ((batchSize - LOW_THRESHOLD) * 1e18) /
@@ -79,7 +95,25 @@ graph LR
             tickLower >= -887272 && tickUpper <= 887272,
             "Ticks out of bounds"
         );
-    } ```
+    }
+
+    function getETHPriceFromRange(
+        uint256 batchSize, // amount1 in wei
+        int24 baseTick
+    ) public pure returns (uint256 ethPrice) {
+        (, , int256 tick) = ticksForClaim(batchSize, baseTick);
+
+        // Calculate required ETH amount
+        uint256 sqrtPriceEth = TickMath.getSqrtPriceAtTick(int24(tick));
+        uint256 res = FullMath.mulDiv(
+            sqrtPriceEth,
+            sqrtPriceEth,
+            FixedPoint96.Q96
+        );
+        ethPrice = FullMath.mulDiv(batchSize, FixedPoint96.Q96, res);
+    }
+}
+```
 
 ### Configuration
 
