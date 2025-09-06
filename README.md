@@ -1,6 +1,6 @@
 # Liquidity Generation Event (LGE) Uniswap 🦄 v4 Hook
 
-A novel token launchpad mechanism built on Uniswap v4 using hooks for liquidity-first token creation.
+A novel token launchpad mechanism built on Uniswap v4 using a hook for liquidity-first token creation.
 
 ## 🚀 Overview
 
@@ -23,8 +23,8 @@ graph LR
 **Token Release**: 17.7B tokens stream linearly over 5,000 blocks (3.5M tokens/block)
 
 **User Contribution**:
-- 50% ETH → Pairs with tokens for LP
-- 50% ETH → Commitment fee (retained on success)
+- 50% ETH → Pairs with tokens for LP (this is LP at half price essentially)
+- 50% ETH → Commitment fee (retained on success). 
 
 **Settlement**: Success triggers LP and rewards distribution, failure triggers full refund
 
@@ -32,7 +32,7 @@ graph LR
 
 <img src="images/active-campaigns.jpg" alt="LGE Active Campaigns" width="900">
 
-*View of active LGE campaigns with dynamic batch pricing and one-click participation*
+*View of active LGE campaigns with dynamic pricing and one-click participation*
 
 ## 💡 Dynamic Pricing Model
 
